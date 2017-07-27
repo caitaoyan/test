@@ -622,8 +622,8 @@ public class PoiToJson {
      * @param url
      */
     public static void getContent(HttpServletRequest request, HttpServletResponse response, String url) {
-        //String jsonDestPath = request.getSession().getServletContext().getRealPath("excel/txt");
-        String jsonDestPath = "/tmp/txt";
+        String jsonDestPath = request.getSession().getServletContext().getRealPath("excel/txt");
+        //String jsonDestPath = "/tmp/txt";
         String path = jsonDestPath + File.separator + url;
         File file = new File(path);
         InputStreamReader read;
