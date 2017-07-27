@@ -1,0 +1,3 @@
+1.在qian-mo文件夹和qianmo-service文件夹中进行mvn clean install操作
+2.第一步执行结束后，在qianmo-service中执行mvn clean spring-boot:run
+3.浏览器地址为http://localhost:8088/qianmo-service
