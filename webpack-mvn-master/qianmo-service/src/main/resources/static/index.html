@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>qianmo-service</title>
+    <script type="text/javascript" src="./js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="./js/index.js"></script>
+</head>
+<body>
+<form id="fileUpload" action="excelPoi" enctype="multipart/form-data" method="post">
+    <input id="excelFile" name="file" type="file"/>
+    <input type="button" value="提交" onclick="submitExcel()"/>
+</form>
+<input type="button" value="下载" style="display: none" onclick="downloadExcel()"/>
+<input type="button" value="获取json" style="display: none" onclick="getContentJson()"/>
+<input type="button" value="公式转换" style="display: none" onclick="changeContent()"/>
+</body>
+</html>

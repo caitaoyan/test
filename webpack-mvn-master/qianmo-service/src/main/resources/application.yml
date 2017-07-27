@@ -1,0 +1,18 @@
+spring:
+  profiles:
+    active: dev
+#  mvc:
+#    view:
+#      prefix: /WEB-INF/jsp/
+#      suffix: .jsp
+  thymeleaf:
+    prefix: classpath:/templates/
+server:
+  port: 8088
+  context-path: /qianmo-service
+#  ssl:
+#    key-store: .keystore
+#    key-password: 123456
+#    key-store-type: JKS
+#    key-alias: Mykeystore
+
