@@ -1,0 +1,26 @@
+{
+	"name": "qianmo",
+	"version": "0.0.1-SNAPSHOT",
+	"description": "a easy, simple and useful spreadsheet based on socialcalc",
+	"main": "app.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": "webpack-dev-server --progress --color --hot --open --port 8010",
+		"build": "webpack --progress --color",
+		"buildp": "webpack -p"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/IanYet/socialcalc-demo.git"
+	},
+	"author": "Ian, kai",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/IanYet/socialcalc-demo/issues"
+	},
+	"homepage": "https://github.com/IanYet/socialcalc-demo#readme",
+	"devDependencies": {
+		"webpack": "3.4.1",
+		"webpack-dev-server": "2.6.1"
+	}
+}

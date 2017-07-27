@@ -1,0 +1,7 @@
+.classpath
+/qian-mo/node_modules/
+/qian-mo/node/
+/qian-mo/target/
+/parent/.idea/
+*.iml
+*.txt
