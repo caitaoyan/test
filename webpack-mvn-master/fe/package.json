@@ -1,0 +1,15 @@
+{
+  "name": "fe",
+  "version": "0.0.1-SNAPSHOT",
+  "description": "",
+  "main": "./app",
+  "scripts": {
+    "build": "webpack -p"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "3.4.1",
+    "webpack-dev-server": "2.6.1"
+  }
+}
