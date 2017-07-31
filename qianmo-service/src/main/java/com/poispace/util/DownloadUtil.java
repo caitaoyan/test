@@ -98,19 +98,17 @@ public class DownloadUtil {
 	 */
 	public void download(ByteArrayOutputStream byteArrayOutputStream, HttpServletResponse response, String returnName) throws IOException{
 		returnName = response.encodeURL(new String(returnName.getBytes(),"iso8859-1"));			//保存的文件名,必须和页面编码一致,否则乱码
-		System.out.println(returnName);
-//		response.addHeader("Content-length", String.valueOf(byteArrayOutputStream.size()));
 		response.setHeader("Access-Control-Expose-Headers", "Content-Disposition, Content-Type");
 		response.setHeader("Content-Disposition",   "attachment;filename=" + returnName);
 		response.setHeader("Access-Control-Allow-Origin", "*");
 		response.setHeader("Content-Type", "application/vnd.ms-excel");
-//		response.setContentLength(byteArrayOutputStream.size());
-		
+
 		ServletOutputStream outputstream = response.getOutputStream();	//取得输出流
 		byteArrayOutputStream.writeTo(outputstream);					//写到输出流
 		byteArrayOutputStream.close();									//关闭
 		outputstream.flush();	//刷数据
 	}
+
 	public static void downloadFile(HttpServletResponse response,String path,String downName) throws Exception{
 		
 		FileInputStream inStream = null ;
