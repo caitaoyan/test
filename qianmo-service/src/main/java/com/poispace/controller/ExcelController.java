@@ -24,7 +24,7 @@ public class ExcelController {
     @RequestMapping(value = "/excel", method = {RequestMethod.POST, RequestMethod.GET})
     public String showExcel() {
         System.out.println("showExcel");
-        return "redirect:app.html?url="+"111.txt";
+        return "redirect:app.html?url=" + "111.txt";
     }
 
     /**
@@ -34,15 +34,14 @@ public class ExcelController {
      * @param request
      * @param model
      * @return
-     * @throws Exception
      */
     @RequestMapping(value = "/excelPoi", method = {RequestMethod.POST, RequestMethod.GET})
     public String excelPoi(MultipartFile file, HttpServletRequest request, Model model) {
-        System.err.println("err111111111111");
+        //System.err.println("是否为中文1111");
         String newjsonfileName = PoiToJson.excelTojson(file, request);
         model.addAttribute("url", newjsonfileName);
         //return "qianmo";
-        return "redirect:app.html?url="+newjsonfileName;
+        return "redirect:app.html?url=" + newjsonfileName;
     }
 
     /**

@@ -10,6 +10,8 @@ spring:
 server:
   port: 8080
   context-path: /qianmo-service
+  tomcat:
+    uri-encoding: utf-8
 #  ssl:
 #    key-store: .keystore
 #    key-password: 123456
