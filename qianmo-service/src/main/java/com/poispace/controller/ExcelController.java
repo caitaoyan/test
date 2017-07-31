@@ -37,7 +37,7 @@ public class ExcelController {
      */
     @RequestMapping(value = "/excelPoi", method = {RequestMethod.POST, RequestMethod.GET})
     public String excelPoi(MultipartFile file, HttpServletRequest request, Model model) {
-        //System.err.println("是否为中文1111");
+        System.err.println("是否为中文1111");
         String newjsonfileName = PoiToJson.excelTojson(file, request);
         model.addAttribute("url", newjsonfileName);
         //return "qianmo";
