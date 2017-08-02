@@ -12,6 +12,9 @@ server:
   context-path: /qianmo-service
   tomcat:
     uri-encoding: utf-8
+  compression:
+      enabled: true
+      mime-types: application/json,application/xml,text/html,text/xml,text/plain
 #  ssl:
 #    key-store: .keystore
 #    key-password: 123456
