@@ -9,7 +9,7 @@ module.exports = {
 	entry: "./app.js",
 	output: {
 		path: path.join(__dirname, 'target', 'classes', 'META-INF', 'resources', 'webjars', packageJSON.name, packageJSON.version),
-		publicPath: "dist/",
+    publicPath: '/assets/',
 		filename: "app.js"
 	},
 	resolve: {

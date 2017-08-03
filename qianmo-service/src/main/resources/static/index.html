@@ -10,6 +10,7 @@
 <form id="fileUpload" action="excelPoi" enctype="multipart/form-data" method="post">
     <input id="excelFile" name="file" type="file"/>
     <input type="button" value="提交" onclick="submitExcel()"/>
+    <p><textarea name="code" id="code2"></textarea></p>
 </form>
 <input type="button" value="下载" style="display: none" onclick="downloadExcel()"/>
 <input type="button" value="获取json" style="display: none" onclick="getContentJson()"/>
