@@ -81,10 +81,19 @@ SliderBarHandler.prototype.addCellAttr = function () {
 	}
 }
 
+SliderBarHandler.prototype.addSheetAttr = function () {
+	var sheet = this.sheet
+	var contentDiv = document.getElementById(config.SlideBarConfig.sliderPaneConfig.sheetAttr.contentId)
+
+
+	console.log(sheet)
+}
+
 function removeAllChild(node) {
 
 	while (node.hasChildNodes()) {
 		node.removeChild(node.firstChild)
 	}
 }
+
 module.exports.SliderBarHandler = SliderBarHandler

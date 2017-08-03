@@ -14,6 +14,9 @@ var SheetEventBinder = function (sheet) {
 
         if (!sheet.isMultiLineEditing && !sheet.isEditing) return false
     }
+    document.onkeyup = function (event) {
+        if(event.which === 17) sheet.isKeyDown = false
+    }
 }
 
 SheetEventBinder.prototype.initRowTD = function (rowTD) {
@@ -54,6 +57,11 @@ SheetEventBinder.prototype.initDragBar = function (dragBar) {
     }
     dragBar.onmouseup = function () {
         sheetEventHandler.dragBarMouseUp()
+    }
+}
+SheetEventBinder.prototype.initFormulaButton = function (button) {
+    button.onclick = function () {
+        sheetEventHandler.formulaButonClick()
     }
 }
 module.exports.SheetEventBinder = SheetEventBinder

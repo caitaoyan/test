@@ -144,18 +144,6 @@ function renderPanes(sliderPanes) {
 
 		paneDiv.appendChild(paneTitleDiv)
 		paneDiv.appendChild(paneContentDiv)
-
-		// if(paneDiv.id === 'cellAttrPane'){
-		//
-		// }else if(paneDiv.id === 'sheetAttrPane'){
-		//
-		// }else if(paneDiv.id === 'funcPane'){
-		//
-		// }else if(paneDiv.id === 'dataSrcPane'){
-		//
-		// }else{
-		//
-		// }
 	}
 }
 

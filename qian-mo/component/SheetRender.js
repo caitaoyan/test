@@ -5,6 +5,8 @@
 var config = require('config')
 var style = require('style')
 var SliderBarRender = require('SliderBarRender').SliderBarRender
+var FuncListRender = require('FuncListRender').FuncListRender
+var funcListRender = new FuncListRender()
 // config.CellConfig
 var SheetRender = function (sheet) {
 	this.sheet=sheet
@@ -177,6 +179,23 @@ SheetRender.prototype.renderSheet = function(sheet, sheetTable) {
             sheetEventBinder.initMultiLine(multiLine)
         }
         sheetTable.appendChild(multiLine)
+
+        var funcListDiv = document.createElement('div')
+        funcListRender.init( funcListDiv)
+        var formulaButton = document.createElement('input')
+        formulaButton.type = 'button'
+        formulaButton.value = 'Paste'
+        sheetEventBinder.initFormulaButton(formulaButton)
+        funcListDiv.appendChild(formulaButton)
+        sheetTable.appendChild(funcListDiv)
+        funcListDiv.id = 'funcListDiv'
+        funcListDiv.onblur = function () {
+            this.style.display = 'none'
+        }
+        funcListDiv.style = 'position: absolute;left: 30px;top: 20px;display:none'
+        funcListDiv.style.left = screen.width / 2 - 250 + 'px'
+        funcListDiv.style.top = screen.height / 2 - 380 + 'px'
+
         var dragBar = document.createElement('div')
         dragBar.style = 'position: absolute;'
         dragBar.style.backgroundColor = 'yellow'

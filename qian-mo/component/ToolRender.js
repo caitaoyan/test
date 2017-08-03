@@ -11,8 +11,8 @@ ToolRender.prototype.init = function (toolDiv, width, height) {
     var ToolEventBinder = ToolEventBinderModule.ToolEventBinder
     // var toolEventBinder = new ToolEventBinder(this.sheet)
 
-    toolDiv.style.width = width + 'px'
-    toolDiv.style.height = height + 'px'
+    toolDiv.style.width = width
+    toolDiv.style.height = height
 
     renderMenu(toolDiv, this.sheet)
 

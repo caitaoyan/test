@@ -36,7 +36,7 @@ var Cell = function (coord) {
 	this.coord = coord
 
 	this.content = ''
-	// this.value = null
+	this.formula = ''
 
 	this.show = true
 

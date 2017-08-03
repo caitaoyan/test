@@ -56,7 +56,7 @@ var ToggleDivOpenLeft = 'left: 76%;'
 
 var ToggleDivStyle =
 	'position: fixed;' +
-	'bottom: 20px;' +
+	'bottom: 5%;' +
 	'background-color: gray;' +
 	'width: 40px;' +
 	'height: 40px;' +
@@ -71,7 +71,7 @@ var ToggleDivStyle =
 
 var ToggleDivHoverStyle =
 	'position: fixed;' +
-	'bottom: 20px;' +
+	'bottom: 5%;' +
 	'background-color: white;' +
 	'width: 40px;' +
 	'height: 40px;' +
@@ -191,8 +191,9 @@ var ButtonBoxStyle =
 	'height: 63%;' +
 	'width: 100%;' +
 	'background-color: #ddd;' +
-	'line-height: 50px' +
-	'min-height: 50px;'
+	'line-height: 50px;' +
+	'min-height: 50px;' +
+	'overflow:auto;'
 
 var ButtonDivStyle =
 	'display: inline-block;' +

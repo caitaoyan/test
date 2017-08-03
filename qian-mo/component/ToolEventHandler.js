@@ -7,6 +7,9 @@ var config = require('config')
 var SheetRenderModule = require('SheetRender')
 var SheetRender = SheetRenderModule.SheetRender
 var sheetRender = null
+
+var Formula = require('Formula').Formula
+
 // var CellRenderModule = require('CellRender')
 // var CellRender = CellRenderModule.CellRender
 // var cellRender = null
@@ -17,6 +20,7 @@ var sheetEventHandler = null
 
 var ToolEventHandler = function (sheet) {
     this.sheet = sheet
+    this.formula = new Formula(sheet)
     sheetRender = new SheetRender(sheet)
     //cellRender = new CellRender(sheet)
     sheetEventHandler = new SheetEventHandler(sheet)
@@ -55,7 +59,7 @@ ToolEventHandler.prototype.buttonClick = function (action, value) {
                     //     needEditCells.push(formula)
                     // }
                 }
-                if (needEditCells.length > 0) {
+                if (false){//needEditCells.length > 0) {
                     var ajax
                     if (window.XMLHttpRequest) {
                         ajax = new XMLHttpRequest()
@@ -74,41 +78,62 @@ ToolEventHandler.prototype.buttonClick = function (action, value) {
                                 var CellList = JSON.parse(ajax.responseText)
                                 for (var key in CellList) {
                                     var value = CellList[key].value.substring(1)
-                                    if (value.indexOf("+") != -1) {
-                                        var result = 0
-                                        var values = value.split("+")
-                                        for (var v in values) {
-                                            result += parseInt(values[v])
-                                        }
-                                        value = result
-                                    }
+                                    // if (value.indexOf("+") != -1) {
+                                    //     var result = 0
+                                    //     var values = value.split("+")
+                                    //     for (var v in values) {
+                                    //         result += parseInt(values[v])
+                                    //     }
+                                    //     value = result
+                                    // }
                                     e[CellList[key].coord]["content"] = value
                                 }
                                 sheet.isPreview = true
                                 document.getElementById('previewDiv').style.display = 'block'
                                 document.getElementById('editDiv').style.display = 'none'
                                 document.getElementById('menuDiv').isDisabled = true
-                                sheetRender.renderSheet(sheet,document.getElementById('sheetTable'))
+                                sheetRender.renderSheet(sheet, document.getElementById('sheetTable'))
 
-                                for (cell in sheet.cells){
-                                    for (attr in sheet.cells[cell]){
-                                        if(attr != 'coord')sheet.setIdAttr(sheet.cells[cell].coord,attr,sheet.cells[cell][attr])
+                                for (cell in sheet.cells) {
+                                    for (attr in sheet.cells[cell]) {
+                                        if (attr === 'content' ){
+                                            if(sheet.cells[cell].formula !== ''){
+                                                this.sheet.fid = cell
+                                                var cc = this.formula.ParseFormulaIntoTokens(sheet.cells[cell].formula.substring(1))
+                                                var dd = this.formula.evaluate_parsed_formula(cc)
+                                                sheet.setIdAttr(sheet.cells[cell].coord, attr, dd.value)
+                                            }else sheet.setIdAttr(sheet.cells[cell].coord, attr, sheet.cells[cell][attr])
+                                        }
+                                        else if (attr !== 'coord' && attr !== 'formula'){
+                                            sheet.setIdAttr(sheet.cells[cell].coord, attr, sheet.cells[cell][attr])
+                                        }
+
                                         //console.log(attr)
                                     }
                                 }
                             }
                         }
                     }
-                }else{
+                } else {
                     sheet.isPreview = true
                     document.getElementById('previewDiv').style.display = 'block'
                     document.getElementById('editDiv').style.display = 'none'
                     document.getElementById('menuDiv').isDisabled = true
-                    sheetRender.renderSheet(sheet,document.getElementById('sheetTable'))
+                    sheetRender.renderSheet(sheet, document.getElementById('sheetTable'))
 
-                    for (cell in sheet.cells){
-                        for (attr in sheet.cells[cell]){
-                            if(attr != 'coord')sheet.setIdAttr(sheet.cells[cell].coord,attr,sheet.cells[cell][attr])
+                    for (cell in sheet.cells) {
+                        for (attr in sheet.cells[cell]) {
+                            if (attr === 'content' ){
+                                if(sheet.cells[cell].formula !== ''){
+                                    this.sheet.fid = cell
+                                    var cc = this.formula.ParseFormulaIntoTokens(sheet.cells[cell].formula.substring(1))
+                                    var dd = this.formula.evaluate_parsed_formula(cc)
+                                    sheet.setIdAttr(sheet.cells[cell].coord, attr, dd.value)
+                                }else sheet.setIdAttr(sheet.cells[cell].coord, attr, sheet.cells[cell][attr])
+                            }
+                            else if (attr !== 'coord' && attr !== 'formula'){
+                                sheet.setIdAttr(sheet.cells[cell].coord, attr, sheet.cells[cell][attr])
+                            }
                         }
                     }
                 }
@@ -122,39 +147,39 @@ ToolEventHandler.prototype.buttonClick = function (action, value) {
             document.getElementById('previewDiv').style.display = 'none'
             document.getElementById('editDiv').style.display = 'block'
             //document.getElementById('menuDiv').style.display = 'block'
-            sheetRender.renderSheet(sheet,document.getElementById('sheetTable'))
+            sheetRender.renderSheet(sheet, document.getElementById('sheetTable'))
             // console.log(sheet.cells)
-            for (cell in sheet.cells){
-                for (attr in sheet.cells[cell]){
-                    if(attr != 'coord'){
+            for (cell in sheet.cells) {
+                for (attr in sheet.cells[cell]) {
+                    if (attr != 'coord') {
                         // console.log(sheet.cells[cell]['formula'])
-                        if(attr==='content' && sheet.cells[cell]['formula']!==undefined&& sheet.cells[cell]['formula']!==''){
-                            sheet.setIdAttr(sheet.cells[cell].coord,attr,sheet.cells[cell]['formula'])
-                        }else{
-                            sheet.setIdAttr(sheet.cells[cell].coord,attr,sheet.cells[cell][attr])
+                        if (attr === 'content' && sheet.cells[cell]['formula'] !== '') {
+                            sheet.setIdAttr(sheet.cells[cell].coord, attr, sheet.cells[cell]['formula'])
+                        } else {
+                            sheet.setIdAttr(sheet.cells[cell].coord, attr, sheet.cells[cell][attr])
                         }
                     }
                 }
             }
             break
         case "Down":
-            var myMask=document.getElementById('mask')
-            myMask.style.display="block"
+            var myMask = document.getElementById('mask')
+            myMask.style.display = "block"
             var e = this.sheet.cells
             var a = {}
             var CellList = []
             for (var key in e) {
-                if(e[key].show){
-                    var col=key.split('_')[0]
-                    var row=key.split('_')[1]
-                    col=String.fromCharCode(col.charCodeAt(0)+e[key].colSpan-1)
-                    row=parseInt(row)+e[key].rowSpan-1
-                    var area=key+'_'+col+'_'+row
-                    var content=e[key]["content"] === undefined ? "" : e[key]["content"]=== null ?"":e[key]["content"]=== ""?"":e[key]["content"]+''
+                if (e[key].show) {
+                    var col = key.split('_')[0]
+                    var row = key.split('_')[1]
+                    col = String.fromCharCode(col.charCodeAt(0) + e[key].colSpan - 1)
+                    row = parseInt(row) + e[key].rowSpan - 1
+                    var area = key + '_' + col + '_' + row
+                    var content = e[key]["content"] === undefined ? "" : e[key]["content"] === null ? "" : e[key]["content"] === "" ? "" : e[key]["content"] + ''
                     var addCell = {
                         "cellName": key,
                         "area": area,
-                        "content":content.replace(/&nbsp;/g,''),
+                        "content": content.replace(/&nbsp;/g, ''),
                         "format": e[key]["format"] === undefined ? "" : e[key]["format"],
                         "font": e[key]["font"] === undefined ? "" : e[key]["font"],
                         "fontSize": e[key]["fontSize"] === undefined ? "" : e[key]["fontSize"],
@@ -169,16 +194,16 @@ ToolEventHandler.prototype.buttonClick = function (action, value) {
                         "alignment": e[key]["alignment"] === undefined ? "" : e[key]["alignment"],
                         "bold": e[key]["bold"] === undefined ? "" : e[key]["bold"],
                         "italic": e[key]["italic"] === undefined ? "" : e[key]["italic"],
-                        "vertical":e[key]["vertical"] === undefined ? "" : e[key]["vertical"],
-                        "wrapText":e[key]["wrapText"] === undefined ? "" : e[key]["wrapText"],
-                        "width":e[key]["width"] === undefined ? "" : e[key]["width"],
-                        "height":e[key]["height"] === undefined ? "" : e[key]["height"]
+                        "vertical": e[key]["vertical"] === undefined ? "" : e[key]["vertical"],
+                        "wrapText": e[key]["wrapText"] === undefined ? "" : e[key]["wrapText"],
+                        "width": e[key]["width"] === undefined ? "" : e[key]["width"],
+                        "height": e[key]["height"] === undefined ? "" : e[key]["height"]
                     }
                     // console.log(addCell.content)
                     CellList.push(addCell)
                 }
             }
-            var json= JSON.stringify(CellList)
+            var json = JSON.stringify(CellList)
             var ajax
             if (window.XMLHttpRequest) {
                 ajax = new XMLHttpRequest()
@@ -187,11 +212,11 @@ ToolEventHandler.prototype.buttonClick = function (action, value) {
             } else {
                 alert("请升级至最新版本的浏览器")
             }
-            if(ajax !=null){
-                ajax.open("POST","/qianmo-service/excelDownload",true)
+            if (ajax != null) {
+                ajax.open("POST", "/qianmo-service/excelDownload", true)
                 // ajax.open("POST","http://localhost:8088/qianmo-service/excelDownload",true)
-                ajax.onload=function(){
-                    if(ajax.status==200){
+                ajax.onload = function () {
+                    if (ajax.status == 200) {
                         var filename = "";
                         var disposition = ajax.getResponseHeader('Content-Disposition');
                         if (disposition && disposition.indexOf('attachment') !== -1) {
@@ -200,7 +225,7 @@ ToolEventHandler.prototype.buttonClick = function (action, value) {
                             if (matches != null && matches[1]) filename = matches[1].replace(/['"]/g, '');
                         }
                         var type = ajax.getResponseHeader('Content-Type');
-                        var blob = new Blob([this.response], { type: type });
+                        var blob = new Blob([this.response], {type: type});
                         if (typeof window.navigator.msSaveBlob !== 'undefined') {
                             // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
                             window.navigator.msSaveBlob(blob, filename);
@@ -223,10 +248,12 @@ ToolEventHandler.prototype.buttonClick = function (action, value) {
                                 window.location = downloadUrl;
                             }
 
-                            setTimeout(function () { URL.revokeObjectURL(downloadUrl); }, 100); // cleanup
+                            setTimeout(function () {
+                                URL.revokeObjectURL(downloadUrl);
+                            }, 100); // cleanup
                         }
                     }
-                    myMask.style.display="none"
+                    myMask.style.display = "none"
                 }
                 ajax.responseType = 'blob'
                 ajax.setRequestHeader('Content-type', 'application/json;charset=utf-8')
@@ -237,15 +264,15 @@ ToolEventHandler.prototype.buttonClick = function (action, value) {
             var parentNode = document.getElementById("QianMoApp")
             var param = parentNode.getAttribute("url")
             var url = ''
-            var method="GET"
-            if(!param&& param!=''){
-                url='json.json'
-                param=null
-            }else{
-                method="POST"
-                url='/qianmo-service/getContentJson'
+            var method = "GET"
+            if (!param && param != '') {
+                url = 'json.json'
+                param = null
+            } else {
+                method = "POST"
+                url = '/qianmo-service/getContentJson'
                 // url='http://localhost:8088/qianmo-service/getContentJson'
-                param=param.substring(param.lastIndexOf("\\")+1)
+                param = param.substring(param.lastIndexOf("\\") + 1)
             }
             var ajax
             if (window.XMLHttpRequest) {
@@ -514,7 +541,7 @@ ToolEventHandler.prototype.buttonClick = function (action, value) {
             break
         case 'addCol':
         case 'deleteCol':
-            cells = sheet.getColAndRow(sheet.firstCellid.split('_')[0]+'_1',String.fromCharCode(sheet.maxCol)+'_'+sheet.maxRow)
+            cells = sheet.getColAndRow(sheet.firstCellid.split('_')[0] + '_1', String.fromCharCode(sheet.maxCol) + '_' + sheet.maxRow)
             //sheet.firstCopiedCell = String.fromCharCode(cells.firstCellCol) + '_' + cells.firstCellRow
             var sheetcopiedCells = []
             for (var i = cells.firstCellCol; i <= cells.lastCellCol; i++) {
@@ -552,11 +579,11 @@ ToolEventHandler.prototype.buttonClick = function (action, value) {
 
             var borders = [['bottomFrame', false], ['leftFrame', false], ['topFrame', false], ['rightFrame', false]]
             if (sheetcopiedCells) {
-                if(action === 'deleteCol'){
-                    var firstCopiedCellCol = cells.firstCellCol+1
+                if (action === 'deleteCol') {
+                    var firstCopiedCellCol = cells.firstCellCol + 1
                     var firstCopiedCellRow = cells.firstCellRow
-                }else{
-                    var firstCopiedCellCol = cells.firstCellCol-1
+                } else {
+                    var firstCopiedCellCol = cells.firstCellCol - 1
                     var firstCopiedCellRow = cells.firstCellRow
                 }
                 sheetcopiedCells.forEach(function (cell) {
@@ -581,7 +608,7 @@ ToolEventHandler.prototype.buttonClick = function (action, value) {
             break
         case 'addRow':
         case 'deleteRow':
-            cells = sheet.getColAndRow('A_'+sheet.firstCellid.split('_')[1],String.fromCharCode(sheet.maxCol)+'_'+sheet.maxRow)
+            cells = sheet.getColAndRow('A_' + sheet.firstCellid.split('_')[1], String.fromCharCode(sheet.maxCol) + '_' + sheet.maxRow)
             //sheet.firstCopiedCell = String.fromCharCode(cells.firstCellCol) + '_' + cells.firstCellRow
             var sheetcopiedCells = []
             for (var i = cells.firstCellCol; i <= cells.lastCellCol; i++) {
@@ -619,12 +646,12 @@ ToolEventHandler.prototype.buttonClick = function (action, value) {
 
             var borders = [['bottomFrame', false], ['leftFrame', false], ['topFrame', false], ['rightFrame', false]]
             if (sheetcopiedCells) {
-                if(action === 'deleteRow'){
+                if (action === 'deleteRow') {
                     var firstCopiedCellCol = cells.firstCellCol
-                    var firstCopiedCellRow = cells.firstCellRow+1
-                }else{
+                    var firstCopiedCellRow = cells.firstCellRow + 1
+                } else {
                     var firstCopiedCellCol = cells.firstCellCol
-                    var firstCopiedCellRow = cells.firstCellRow-1
+                    var firstCopiedCellRow = cells.firstCellRow - 1
                 }
                 sheetcopiedCells.forEach(function (cell) {
                     var newCell = {}
@@ -645,11 +672,15 @@ ToolEventHandler.prototype.buttonClick = function (action, value) {
                 sheet.render()
             }
             break
+        case 'func':
+            if (document.getElementById('funcListDiv').style.display === 'none') document.getElementById('funcListDiv').style.display = 'block'
+            else document.getElementById('funcListDiv').style.display = 'none'
+            break
         default:
             alert('该功能未实现，请期待')
             break
     }
-    if(action !== ('multiLine' || 'copy' ) && !sheet.isPreview){
+    if (action !== ('multiLine' || 'copy' ) && !sheet.isPreview) {
         sheetEventHandler.mouseDown(sheet.firstCellid)
         sheetEventHandler.mouseUp(document.getElementById(sheet.lastCellid))
     }

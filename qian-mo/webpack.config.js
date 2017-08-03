@@ -32,7 +32,9 @@ module.exports = {
             WSRender: path.resolve(__dirname, "./component/WSRender.js"),
             Util: path.resolve(__dirname, "./component/Util.js"),
 			SliderBarHandler: path.resolve(__dirname, "./component/SliderBarHandler.js"),
-			SliderBarRender: path.resolve(__dirname, "./component/SliderBarRender.js")
+			SliderBarRender: path.resolve(__dirname, "./component/SliderBarRender.js"),
+			Formula: path.resolve(__dirname, "./component/Formula.js"),
+            FuncListRender: path.resolve(__dirname, "./component/FuncListRender.js")
 		}
 	},
 	devServer: {

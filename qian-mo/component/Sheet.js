@@ -44,6 +44,7 @@ var Sheet = function (UndoStack) {
     this.isEditing = false
     this.isMultiLineEditing = false
     this.isDraging = false
+    this.isCtrlDown = false
 
     //this.isFont = false
     this.isPreview = false

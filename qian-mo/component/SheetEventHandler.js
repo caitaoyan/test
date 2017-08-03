@@ -10,9 +10,13 @@ var SheetRenderModule = require('SheetRender')
 var SheetRender = SheetRenderModule.SheetRender
 var SliderBarHandler = require('SliderBarHandler').SliderBarHandler
 
+var Formula = require('Formula').Formula
+//var formula = {}
+
 var SheetEventHandler = function (sheet) {
 
     this.sheet = sheet
+    this.formula = new Formula(sheet)
     this.sheetRender = new SheetRender(sheet)
 	this.sliderBarHandler = new SliderBarHandler(sheet)
 }
@@ -110,7 +114,8 @@ SheetEventHandler.prototype.dblclick = function (element) {
         input.style.height = element.offsetHeight + 'px'
         input.style.width = element.offsetWidth + 'px'
         if (this.sheet.cells[element.id]) {
-            input.value = this.sheet.cells[element.id].content
+            if(this.sheet.cells[element.id].formula === '') input.value = this.sheet.cells[element.id].content
+            else input.value = this.sheet.cells[element.id].formula
         }
         else {
             input.value = ''
@@ -127,7 +132,14 @@ SheetEventHandler.prototype.inputBlur = function () {
     input.style.display = 'none'
     //var ele = this.sheet.lastCell
     if (input.value) {
-        this.sheet.setAttr('content', input.value)
+        if(input.value[0] === '='){
+            //this.sheet.fid = this.sheet.lastCellid
+            //var cc = this.formula.ParseFormulaIntoTokens(input.value.substring(1))
+            //var dd = this.formula.evaluate_parsed_formula(cc)
+            this.sheet.setAttr('formula',input.value)
+            this.sheet.setAttr('content', input.value)
+        }
+        else this.sheet.setAttr('content', input.value)
         this.sheet.render()
         // var sp = document.getElementById('sp')
         // sp.value = input.value
@@ -198,6 +210,9 @@ SheetEventHandler.prototype.keyDown = function (event) {
         var row = this.sheet.editCells.lastCellRow//parseInt(element.id.split('_')[1])
         //console.log(event.which)
         switch (event.which) {
+            case 17:
+                this.sheet.isCtrlDown = true
+                return
             case 37://左键
                 do {
                     col = col - 1
@@ -251,112 +266,115 @@ SheetEventHandler.prototype.keyDown = function (event) {
                     this.mouseUp(document.getElementById(cellid))
                 }
                 return false
-            case 17://ctrl
-                break
             case 18://alt
                 break
             case 67://ctrl+c
-                var ta = document.getElementById('ta')
-                var text = ''
-                //var firstCell=this.sheet.firstCell
-                //var lastCell=this.sheet.lastCell
-                var cells = this.sheet.getColAndRow()
-                if (cells != null) {
-                    var rowCount = 0
-                    for (var i = cells.firstCellRow; i <= cells.lastCellRow; i++) {
-                        var colCount = 0
-                        for (var j = cells.firstCellCol; j <= cells.lastCellCol; j++) {
-                            var eleOld = document.getElementById(
-                                String.fromCharCode(j)
-                                + '_' + i)
-                            text += eleOld.firstChild.innerHTML + '\t'
-                            colCount++
+                if(this.sheet.isCtrlDown){
+                    var ta = document.getElementById('ta')
+                    var text = ''
+                    //var firstCell=this.sheet.firstCell
+                    //var lastCell=this.sheet.lastCell
+                    var cells = this.sheet.getColAndRow()
+                    if (cells != null) {
+                        var rowCount = 0
+                        for (var i = cells.firstCellRow; i <= cells.lastCellRow; i++) {
+                            var colCount = 0
+                            for (var j = cells.firstCellCol; j <= cells.lastCellCol; j++) {
+                                var eleOld = document.getElementById(
+                                    String.fromCharCode(j)
+                                    + '_' + i)
+                                text += eleOld.firstChild.innerHTML + '\t'
+                                colCount++
+                            }
+                            text = text.substr(0, text.length - 1)
+                            text += '\n'
+                            rowCount++
                         }
                         text = text.substr(0, text.length - 1)
-                        text += '\n'
-                        rowCount++
                     }
-                    text = text.substr(0, text.length - 1)
+                    ta.value = text
+                    ta.style.display = 'block'
+                    ta.focus()
+                    ta.select()
+
+                    window.setTimeout(function () {
+                        ta.style.display = 'none'
+                        var cell = document.getElementById(col + '_' + row)
+                        //cell.focus()
+                    }, 200)
                 }
-                ta.value = text
-                ta.style.display = 'block'
-                ta.focus()
-                ta.select()
-
-                window.setTimeout(function () {
-                    ta.style.display = 'none'
-                    var cell = document.getElementById(col + '_' + row)
-                    //cell.focus()
-                }, 200)
-
                 break
             case 86://ctrl+v
-                var ta = document.getElementById('ta')
-                ta.style.display = 'block'
-                ta.focus()
-                ta.select()
-                var sheet = this.sheet
-                window.setTimeout(function () {
-                    ta.blur()
-                    var v = ta.value
-                    ta.style.display = 'none'
-                    v = v.split('\n')
-                    for (var i = 0; i < v.length; i++) {
-                        var vv = v[i].split('\t')
-                        for (var j = 0; j < vv.length; j++) {
-                            var cvCol = col + j
-                            var cvRow = row + i
-                            var cells = {}
-                            cells.firstCellCol = cvCol
-                            cells.firstCellRow = cvRow
-                            cells.lastCellCol = cvCol
-                            cells.lastCellRow = cvRow
-                            sheet.setAttr('content', vv[j], cells)
+                if(this.sheet.isCtrlDown){
+                    var ta = document.getElementById('ta')
+                    ta.style.display = 'block'
+                    ta.focus()
+                    ta.select()
+                    var sheet = this.sheet
+                    window.setTimeout(function () {
+                        ta.blur()
+                        var v = ta.value
+                        ta.style.display = 'none'
+                        v = v.split('\n')
+                        for (var i = 0; i < v.length; i++) {
+                            var vv = v[i].split('\t')
+                            for (var j = 0; j < vv.length; j++) {
+                                var cvCol = col + j
+                                var cvRow = row + i
+                                var cells = {}
+                                cells.firstCellCol = cvCol
+                                cells.firstCellRow = cvRow
+                                cells.lastCellCol = cvCol
+                                cells.lastCellRow = cvRow
+                                sheet.setAttr('content', vv[j], cells)
+                            }
                         }
-                    }
-                    var cell = document.getElementById(String.fromCharCode(col) + '_' + row)
-                    cell.focus()
-                    sheet.render()
-                }, 200)
+                        var cell = document.getElementById(String.fromCharCode(col) + '_' + row)
+                        cell.focus()
+                        sheet.render()
+                    }, 200)
 
+                }
                 this.sheet.isKeyDown = false
                 break
             case 88://ctrl+x
-                var ta = document.getElementById('ta')
-                var text = ''
-                //var firstCell=this.sheet.firstCell
-                //var lastCell=this.sheet.lastCell
-                var cells = this.sheet.getColAndRow()
-                if (cells != null) {
-                    var rowCount = 0
-                    for (var i = cells.firstCellRow; i <= cells.lastCellRow; i++) {
-                        var colCount = 0
-                        for (var j = cells.firstCellCol; j <= cells.lastCellCol; j++) {
-                            var eleOld = document.getElementById(
-                                String.fromCharCode(j)
-                                + '_' + i)
-                            text += eleOld.firstChild.innerHTML + '\t'
-                            colCount++
+                if(this.sheet.isCtrlDown){
+                    var ta = document.getElementById('ta')
+                    var text = ''
+                    //var firstCell=this.sheet.firstCell
+                    //var lastCell=this.sheet.lastCell
+                    var cells = this.sheet.getColAndRow()
+                    if (cells != null) {
+                        var rowCount = 0
+                        for (var i = cells.firstCellRow; i <= cells.lastCellRow; i++) {
+                            var colCount = 0
+                            for (var j = cells.firstCellCol; j <= cells.lastCellCol; j++) {
+                                var eleOld = document.getElementById(
+                                    String.fromCharCode(j)
+                                    + '_' + i)
+                                text += eleOld.firstChild.innerHTML + '\t'
+                                colCount++
+                            }
+                            text = text.substr(0, text.length - 1)
+                            text += '\n'
+                            rowCount++
                         }
                         text = text.substr(0, text.length - 1)
-                        text += '\n'
-                        rowCount++
                     }
-                    text = text.substr(0, text.length - 1)
+                    ta.value = text
+                    ta.style.display = 'block'
+                    ta.focus()
+                    ta.select()
+
+                    window.setTimeout(function () {
+                        ta.style.display = 'none'
+                        var cell = document.getElementById(String.fromCharCode(col) + '_' + row)
+                        cell.focus()
+                    }, 200)
+
+                    this.sheet.setAttr('content', '')
+                    this.sheet.render()
                 }
-                ta.value = text
-                ta.style.display = 'block'
-                ta.focus()
-                ta.select()
-
-                window.setTimeout(function () {
-                    ta.style.display = 'none'
-                    var cell = document.getElementById(String.fromCharCode(col) + '_' + row)
-                    cell.focus()
-                }, 200)
-
-                this.sheet.setAttr('content', '')
-                this.sheet.render()
                 break
             case 8://backspace
                 this.sheet.setAttr('content', '')
@@ -382,6 +400,12 @@ SheetEventHandler.prototype.multiLineBlur = function (text) {
     this.sheet.setAttr('wrapText', true)
     this.sheet.render()
     this.sheet.isMultiLineEditing = false
+}
+
+SheetEventHandler.prototype.formulaButonClick = function () {
+    var fname = document.getElementById('funcNameSelect').value
+    this.sheet.setAttr('content','='+fname+'(')
+    this.sheet.render()
 }
 
 //获取元素的纵坐标
